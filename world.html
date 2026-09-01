@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OPALBLACK · World</title>
+<meta name="description" content="Any surface will compute. We are taking the computer out of the box.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+:root{--bg:#050505;--fg:#f4f1ea;--muted:#8a8680;--gold:#f4f1ea;--line:#2c2c2a}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg);font:400 16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+button,a{cursor:pointer}
+.verbar{position:relative;z-index:20;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:14px 22px}
+.mk{font-family:"Instrument Serif",serif;font-size:18px;color:var(--gold);margin-right:6px}
+.verbar a,.verbar span.on{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.verbar span.on{border-color:var(--gold);color:var(--gold);background:rgba(244,241,234,.1)}
+.hero{position:relative;min-height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.hero video,.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.42}
+.veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,5,5,.45),rgba(5,5,5,.78) 50%,rgba(5,5,5,.94))}
+.in{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px 22px 80px;max-width:52rem}
+.kick{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:"Instrument Serif",serif;font-size:clamp(2rem,6.4vw,4.1rem);line-height:1.08;margin:16px 0}
+.play{align-self:flex-start;min-height:44px;padding:0 22px;border-radius:999px;border:1px solid rgba(244,241,234,.4);background:rgba(244,241,234,.1);color:var(--gold);font:500 14px "IBM Plex Sans",sans-serif}
+.caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.caps button{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font:11px/1 "IBM Plex Sans",sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.caps button.on{border-color:var(--gold);color:var(--gold);background:rgba(244,241,234,.1)}
+.note{max-width:36ch;color:var(--muted);margin-top:22px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <img id="still" alt="">
+  <video id="vid" autoplay muted loop playsinline></video>
+  <div class="veil"></div>
+  <div class="verbar">
+    <span class="mk">OPALBLACK</span>
+    <a href="index.html">Room</a>
+    <a href="index.html">Instrument</a>
+    <span class="on">World</span>
+    <a href="house.html">House</a>
+  </div>
+  <div class="in">
+    <p class="kick">The world</p>
+    <h1 id="line">Any surface will compute.</h1>
+    <button class="play" type="button" id="play">Hear it</button>
+    <div class="caps" id="caps"></div>
+    <p class="note" id="note">Your dining table. The floor. The walls. The jacket you already put on.</p>
+  </div>
+</div>
+<script>
+const MEDIA = location.pathname.includes("/docs/") ? "../public/media/" : "media/";
+const SURFACES = [
+  {name:"Dining table", line:"It is the computer. Not furniture with a charger hidden in it.", still:"table.jpg", video:"table.mp4"},
+  {name:"Floor", line:"Knows you came in.", still:"floor.jpg", video:"floor.mp4"},
+  {name:"Walls", line:"Not a place you hang a screen.", still:"walls.jpg", video:"walls.mp4"},
+  {name:"Jacket", line:"The health meter you forgot you were wearing.", still:"jacket.jpg", video:"jacket.mp4"},
+  {name:"Worktop", line:"Knows heat and wet.", still:"worktop.jpg", video:"worktop.mp4"},
+  {name:"Front door", line:"Knows it opened.", still:"door.jpg", video:"door.mp4"},
+  {name:"The pipe", line:"Metal that says it is dying before it splits.", still:"firstjob.jpg", video:"firstjob.mp4"}
+];
+const OPEN = [
+  {t:0, line:"We put a computer on a desk."},
+  {t:2.22, line:"Then we put one in your pocket."},
+  {t:4.16, line:"The next one is not a thing you carry."},
+  {t:6.72, line:"Any surface will compute."},
+  {t:8.52, line:"Your dining table. The floor. The walls. The jacket you already put on."},
+  {t:17.47, line:"We are taking the computer out of the box."}
+];
+const still = document.getElementById("still");
+const vid = document.getElementById("vid");
+const line = document.getElementById("line");
+const note = document.getElementById("note");
+const play = document.getElementById("play");
+const audio = new Audio(MEDIA + "world-open.mp3");
+function show(s){
+  still.src = MEDIA + s.still;
+  still.alt = s.name;
+  vid.src = MEDIA + s.video;
+  vid.poster = MEDIA + s.still;
+  vid.play().catch(()=>{});
+  note.textContent = s.line;
+  [...document.getElementById("caps").children].forEach(b => b.classList.toggle("on", b.textContent === s.name));
+}
+SURFACES.forEach((s, n) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = s.name;
+  b.onclick = () => show(s);
+  if (n === 0) b.className = "on";
+  document.getElementById("caps").appendChild(b);
+});
+play.onclick = () => {
+  if (audio.paused) { audio.play(); play.textContent = "Hold the stage"; }
+  else { audio.pause(); play.textContent = "Hear it"; }
+};
+audio.addEventListener("timeupdate", () => {
+  const beat = [...OPEN].reverse().find(b => audio.currentTime >= b.t - 0.04);
+  if (beat) line.textContent = beat.line;
+});
+audio.addEventListener("ended", () => { play.textContent = "Hear it"; line.textContent = "Any surface will compute."; });
+show(SURFACES[0]);
+</script>
+</body>
+</html>

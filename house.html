@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OPALBLACK · House</title>
+<meta name="description" content="Walk a house. Any surface will compute.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+:root{
+  --bg:#050505; --fg:#f4f1ea; --muted:#8a8680; --gold:#f4f1ea; --line:#2c2c2a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);
+  font:400 16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+button,a{cursor:pointer}
+.verbar{position:relative;z-index:20;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:14px 22px}
+.mk{font-family:"Instrument Serif",serif;font-size:18px;color:var(--gold);margin-right:6px}
+.verbar a,.verbar span.on{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;
+  border:1px solid var(--line);border-radius:999px;color:var(--muted);text-decoration:none;
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.verbar span.on{border-color:var(--gold);color:var(--gold);background:rgba(244,241,234,.1)}
+.stage{position:fixed;inset:0;z-index:0}
+.stage img,.stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:filter .5s,opacity .5s}
+.stage.dumb img,.stage.dumb video{filter:grayscale(1);opacity:.22}
+.stage.awake img{opacity:.4}
+.stage.awake video{opacity:.5}
+.veil{position:fixed;inset:0;z-index:1;background:linear-gradient(180deg,rgba(5,5,5,.5),rgba(5,5,5,.72) 40%,rgba(5,5,5,.92))}
+.ui{position:relative;z-index:2;display:flex;flex-direction:column;min-height:100dvh}
+.mid{flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px 22px 12px}
+.kick{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+h1{font-family:"Instrument Serif",serif;font-size:clamp(2rem,6vw,4.1rem);line-height:1.08;margin:0;max-width:18ch}
+h1.mute{color:var(--muted)}
+.wake{margin-top:28px;min-height:44px;padding:0 22px;border-radius:999px;border:1px solid rgba(244,241,234,.5);
+  background:rgba(244,241,234,.1);color:var(--gold);font:500 14px/1 "IBM Plex Sans",sans-serif}
+.rail{display:flex;gap:6px;overflow-x:auto;padding:0 22px 8px}
+.rail button{min-width:44px;min-height:44px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;color:var(--muted);font:11px/1 "IBM Plex Sans",sans-serif;letter-spacing:.16em}
+.rail button.now{border-color:var(--gold);color:var(--gold);background:rgba(244,241,234,.12)}
+.rail button.on{color:var(--fg)}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px}
+.foot button{min-width:44px;min-height:44px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;color:var(--muted);font:inherit}
+.tour{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 20px;
+  border-radius:999px;border:1px solid rgba(244,241,234,.4);background:rgba(244,241,234,.1);
+  color:var(--gold);font:500 14px "IBM Plex Sans",sans-serif}
+.sub{margin:0;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="stage dumb" id="stage">
+  <img id="still" alt="">
+  <video id="vid" autoplay muted loop playsinline></video>
+</div>
+<div class="veil"></div>
+<div class="ui">
+  <div class="verbar">
+    <span class="mk">OPALBLACK</span>
+    <a href="index.html">Room</a>
+    <a href="index.html">Instrument</a>
+    <a href="world.html">World</a>
+    <span class="on">House</span>
+  </div>
+  <p class="sub" style="padding:0 22px">House is a new cut. World is untouched.</p>
+  <div class="mid">
+    <p class="kick" id="kick">The porch</p>
+    <p class="sub" id="count">The house · 0/9 noticing</p>
+    <h1 class="mute" id="line">This surface is dumb.</h1>
+    <div><button class="wake" type="button" id="wake">Walk in</button></div>
+  </div>
+  <div class="rail" id="rail"></div>
+  <div class="foot">
+    <button type="button" id="prev" aria-label="Previous">←</button>
+    <button class="tour" type="button" id="tour">Walk the house</button>
+    <button type="button" id="next" aria-label="Next">→</button>
+  </div>
+</div>
+<script>
+const MEDIA = location.pathname.includes("/docs/") ? "../public/media/" : "media/";
+const ROOMS = [
+  {id:"porch", name:"The porch", line:"Walk a house in your head.", still:"porch.jpg", video:"porch.mp4", wake:true, t:0},
+  {id:"door", name:"Front door", line:"Knows it opened.", still:"door.jpg", video:"door.mp4", wake:true, t:2.12},
+  {id:"floor", name:"Hall floor", line:"Knows you came in.", still:"floor.jpg", video:"floor.mp4", wake:true, t:4.06},
+  {id:"worktop", name:"Kitchen worktop", line:"Knows heat and wet.", still:"worktop.jpg", video:"worktop.mp4", wake:true, t:6.06},
+  {id:"table", name:"Dining table", line:"Not furniture with a charger hidden in it. It is the computer.", still:"table.jpg", video:"table.mp4", wake:true, t:8.52},
+  {id:"walls", name:"The wall", line:"Not a place you hang a screen.", still:"walls.jpg", video:"walls.mp4", wake:true, t:13.37},
+  {id:"window", name:"The window", line:"Glass that already looks out. Now it can notice.", still:"window.jpg", video:"window.mp4", wake:true, t:13.37},
+  {id:"jacket", name:"The jacket", line:"The health meter you forgot you were wearing.", still:"jacket.jpg", video:"jacket.mp4", wake:true, t:15.97},
+  {id:"pipe", name:"The pipe you never see", line:"Then the same idea goes to the metal holding the city up.", still:"firstjob.jpg", video:"firstjob.mp4", wake:true, t:19.75},
+  {id:"close", name:"Out of the box", line:"Any surface will compute. We are taking the computer out of the box.", still:"porch.jpg", video:"porch.mp4", wake:false, t:23.07}
+];
+const BEATS = [
+  {t:0,id:"porch"},{t:2.12,id:"door"},{t:4.06,id:"floor"},{t:6.06,id:"worktop"},
+  {t:8.52,id:"table"},{t:13.37,id:"walls"},{t:15.97,id:"jacket"},{t:19.75,id:"pipe"},{t:23.07,id:"close"}
+];
+const WAKEABLE = ROOMS.filter(r => r.wake).map(r => r.id);
+let i = 0;
+const woken = new Set();
+const audio = new Audio(MEDIA + "house-tour.mp3");
+let playing = false;
+
+const still = document.getElementById("still");
+const vid = document.getElementById("vid");
+const stage = document.getElementById("stage");
+const kick = document.getElementById("kick");
+const line = document.getElementById("line");
+const wakeBtn = document.getElementById("wake");
+const count = document.getElementById("count");
+const rail = document.getElementById("rail");
+const tourBtn = document.getElementById("tour");
+
+function awake(room){ return !room.wake || woken.has(room.id); }
+
+function render(){
+  const room = ROOMS[i];
+  const on = awake(room);
+  still.src = MEDIA + room.still;
+  still.alt = room.name;
+  vid.poster = MEDIA + room.still;
+  if (vid.dataset.src !== room.video) {
+    vid.dataset.src = room.video;
+    vid.src = MEDIA + room.video;
+    vid.play().catch(() => {});
+  }
+  stage.className = "stage " + (on ? "awake" : "dumb");
+  kick.textContent = room.name;
+  count.textContent = "The house · " + WAKEABLE.filter(id => woken.has(id)).length + "/" + WAKEABLE.length + " noticing";
+  line.textContent = on ? room.line : "This surface is dumb.";
+  line.className = on ? "" : "mute";
+  wakeBtn.style.display = on ? "none" : "inline-flex";
+  wakeBtn.textContent = room.id === "porch" ? "Walk in" : "Wake it";
+  [...rail.children].forEach((b, idx) => {
+    b.className = idx === i ? "now" : (!ROOMS[idx].wake || woken.has(ROOMS[idx].id) ? "on" : "");
+  });
+  document.getElementById("prev").disabled = i === 0;
+  document.getElementById("next").disabled = i === ROOMS.length - 1 && on;
+}
+
+ROOMS.forEach((r, idx) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = String(idx + 1).padStart(2, "0");
+  b.title = r.name;
+  b.onclick = () => { i = idx; render(); };
+  rail.appendChild(b);
+});
+
+wakeBtn.onclick = () => { woken.add(ROOMS[i].id); render(); };
+document.getElementById("prev").onclick = () => { i = Math.max(0, i - 1); render(); };
+document.getElementById("next").onclick = () => {
+  const room = ROOMS[i];
+  if (room.wake && !awake(room)) woken.add(room.id);
+  else i = Math.min(ROOMS.length - 1, i + 1);
+  render();
+};
+tourBtn.onclick = () => {
+  if (audio.paused) { audio.play(); playing = true; tourBtn.textContent = "Hold the house"; }
+  else { audio.pause(); playing = false; tourBtn.textContent = "Walk the house"; }
+};
+audio.addEventListener("timeupdate", () => {
+  const t = audio.currentTime;
+  const beat = [...BEATS].reverse().find(b => t >= b.t - 0.04);
+  if (!beat) return;
+  const idx = ROOMS.findIndex(r => r.id === beat.id);
+  if (idx >= 0) {
+    i = idx;
+    if (ROOMS[idx].wake) woken.add(ROOMS[idx].id);
+    render();
+  }
+});
+audio.addEventListener("ended", () => { playing = false; tourBtn.textContent = "Walk the house"; });
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight") { e.preventDefault(); document.getElementById("next").click(); }
+  if (e.key === "ArrowLeft") { e.preventDefault(); document.getElementById("prev").click(); }
+  if (e.key === "Enter" || e.key === " ") {
+    if (e.target.tagName === "BUTTON" || e.target.tagName === "A") return;
+    e.preventDefault();
+    const room = ROOMS[i];
+    if (room.wake && !awake(room)) { woken.add(room.id); render(); }
+    else document.getElementById("next").click();
+  }
+});
+render();
+</script>
+</body>
+</html>
