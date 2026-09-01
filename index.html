@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OPALBLACK · Instrument</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<meta name="description" content="Live OPALBLACK investor instrument. Two cuts: the Room and the Instrument.">
+<style>
+:root{
+--bg:#03070c; --bg2:#061018; --panel:#07141e; --line:#123044;
+--ink:#e8f7ff; --dim:#8ec4d8; --quiet:#4d7a90;
+--navy:#041822; --gold:#3ee0ff; --teal:#3ee0ff; --rust:#ff6b8a; --grn:#5dffc4;
+--hud:#3ee0ff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+font:400 16px/1.62 "IBM Plex Sans","Helvetica Neue",-apple-system,Arial,sans-serif;overflow-x:hidden;
+background-image:radial-gradient(1200px 600px at 80% -10%,rgba(62,224,255,.08),transparent 55%),
+linear-gradient(180deg,#03070c,#050b12 40%,#03070c);
+}
+.wrap{max-width:60rem;margin:0 auto;padding:0 22px}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(3,7,12,.82);backdrop-filter:blur(14px);
+border-bottom:1px solid var(--line)}
+nav .in{max-width:60rem;margin:0 auto;padding:11px 22px;display:flex;align-items:center;gap:20px}
+nav .bd{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:14.5px;color:var(--gold);letter-spacing:.02em;white-space:nowrap}
+nav .lk{margin-left:auto;display:flex;gap:18px;overflow-x:auto;scrollbar-width:none}
+nav .lk::-webkit-scrollbar{display:none}
+nav .nv{background:none;border:0;border-bottom:1px solid transparent;color:var(--dim);
+font:inherit;font-size:13px;white-space:nowrap;padding:3px 0;cursor:pointer;transition:.2s}
+nav .nv:hover{color:var(--ink);border-bottom-color:var(--gold)}
+nav .nv:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* hero */
+.hero{position:relative;min-height:88vh;display:flex;align-items:center;overflow:hidden}
+#surf{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+.hero .in{position:relative;z-index:2;max-width:60rem;margin:0 auto;padding:70px 22px}
+.kick{font-size:12px;letter-spacing:.14em;color:var(--gold);margin-bottom:20px;font-weight:600}
+h1{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:clamp(34px,7.4vw,70px);line-height:1.03;margin:0;
+letter-spacing:-.028em;color:#fff}
+.strap{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:clamp(19px,3.1vw,27px);color:var(--gold);margin:18px 0 0;line-height:1.28}
+.hsub{font-size:clamp(16px,2.1vw,18.5px);color:var(--dim);margin:22px 0 0;max-width:56ch;line-height:1.62}
+.scroll{margin-top:40px;font-size:12.5px;color:var(--quiet);letter-spacing:.08em}
+
+/* sections */
+section{padding:64px 0;border-top:1px solid var(--line);scroll-margin-top:64px}
+.eyebrow{font-size:11.5px;letter-spacing:.14em;color:var(--teal);font-weight:600;margin-bottom:12px}
+h2{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:clamp(24px,4vw,36px);color:#fff;margin:0 0 16px;
+line-height:1.14;letter-spacing:-.018em}
+h3{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:19px;color:var(--gold);margin:0 0 8px}
+p{margin:0 0 15px;color:var(--dim)}
+.lead{font-size:18px;line-height:1.62;color:var(--ink);max-width:64ch}
+.small{font-size:13.4px;color:var(--quiet)}
+b,strong{color:#fff;font-weight:600}
+.pull{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:clamp(19px,2.9vw,25px);line-height:1.4;color:#fff;
+border-left:3px solid var(--gold);padding:6px 0 6px 22px;margin:26px 0;max-width:58ch;font-style:italic}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.rv.on{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+/* INSTRUMENT */
+.inst{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);
+border-radius:8px;overflow:hidden;margin-top:26px}
+.inst .bar{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line);
+background:rgba(0,0,0,.25)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--grn);box-shadow:0 0 9px var(--grn);
+animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.bar .t{font-size:12.5px;color:var(--dim);letter-spacing:.05em}
+.bar .rt{margin-left:auto;font-size:11.5px;color:var(--quiet)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.cell{padding:16px}
+.cell+.cell{border-left:1px solid var(--line)}
+@media(max-width:820px){.cell+.cell{border-left:0;border-top:1px solid var(--line)}}
+.clab{font-size:11px;letter-spacing:.1em;color:var(--quiet);margin-bottom:9px}
+canvas{display:block;width:100%;height:auto;border-radius:4px;touch-action:pan-y}
+
+/* controls */
+.ctrls{padding:16px;border-top:1px solid var(--line);background:rgba(0,0,0,.2)}
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:700px){.cg{grid-template-columns:1fr}}
+.ct label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--dim);margin-bottom:7px}
+.ct label span{color:var(--gold);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--line);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+background:var(--gold);cursor:pointer;box-shadow:0 0 0 4px rgba(201,169,97,.16)}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:var(--gold);
+cursor:pointer;border:0;box-shadow:0 0 0 4px rgba(201,169,97,.16)}
+.btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+button.px{background:transparent;border:1px solid var(--line);color:var(--dim);padding:7px 13px;
+border-radius:4px;font:inherit;font-size:12.5px;cursor:pointer;transition:.2s}
+button.px:hover{border-color:var(--gold);color:var(--ink)}
+button.px[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:#20180A;font-weight:600}
+
+/* readout */
+.ro{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+border-top:1px solid var(--line)}
+@media(max-width:700px){.ro{grid-template-columns:1fr}}
+.ro>div{background:var(--bg2);padding:14px 16px}
+.ro .k{font-size:10.5px;letter-spacing:.1em;color:var(--quiet);margin-bottom:5px}
+.ro .v{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:25px;color:#fff;line-height:1;font-variant-numeric:tabular-nums}
+.ro .u{font-size:11.5px;color:var(--quiet);margin-top:4px}
+.ro .v.cls{color:var(--teal)}
+.ro .v.drift{color:var(--rust)}
+.verdict{padding:14px 16px;border-top:1px solid var(--line);font-size:14px;color:var(--dim);
+background:rgba(63,182,201,.07)}
+.verdict b{color:var(--teal)}
+
+/* wall */
+.wall{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:24px 0 8px}
+@media(max-width:760px){.wall{grid-template-columns:repeat(3,1fr)}}
+.blk{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:14px 10px;
+text-align:center;cursor:pointer;transition:.22s;position:relative;overflow:hidden}
+.blk:hover{transform:translateY(-3px);border-color:var(--gold)}
+.blk.cl{border-style:dashed;opacity:.62}
+.blk .tg{font-size:9px;letter-spacing:.09em;font-weight:700;margin-bottom:7px}
+.blk.cl .tg{color:var(--grn)}.blk.pv .tg{color:var(--gold)}
+.blk .nm{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:13px;color:var(--ink);line-height:1.28}
+.blk.pv{background:linear-gradient(180deg,rgba(201,169,97,.1),transparent)}
+
+/* accordion */
+.acc{border:1px solid var(--line);border-radius:6px;margin:11px 0;overflow:hidden;background:var(--panel)}
+.acc .hd{padding:15px 18px;cursor:pointer;display:flex;align-items:center;gap:13px}
+.acc .hd:hover{background:rgba(255,255,255,.02)}
+.acc .no{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:20px;color:var(--gold);min-width:22px}
+.acc .ti{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:17.5px;color:#fff}
+.acc .ch{margin-left:auto;color:var(--quiet);font-size:19px;transition:.25s}
+.acc.open .ch{transform:rotate(45deg)}
+.acc .bd{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.2,.7,.3,1)}
+.acc.open .bd{max-height:1400px}
+.acc .bi{padding:0 18px 18px}
+.tabs{display:flex;gap:0;border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-bottom:13px}
+.tabs button{flex:1;background:transparent;border:0;border-right:1px solid var(--line);color:var(--dim);
+padding:9px 6px;font:inherit;font-size:12px;cursor:pointer;transition:.2s}
+.tabs button:last-child{border-right:0}
+.tabs button[aria-pressed=true]{background:var(--gold);color:#20180A;font-weight:600}
+.pane p{font-size:14.8px;line-height:1.6;color:var(--dim)}
+.pane p:last-child{margin-bottom:0}
+
+/* ledger */
+.lg{border-top:1px solid var(--line);margin-top:20px}
+.lr{display:grid;grid-template-columns:200px 1fr;gap:22px;padding:17px 4px;border-bottom:1px solid var(--line)}
+@media(max-width:700px){.lr{grid-template-columns:1fr;gap:6px}}
+.lr .f{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:29px;color:#fff;line-height:1;letter-spacing:-.02em}
+.lr .f small{display:block;font-family:inherit;font-size:11.5px;color:var(--teal);margin-top:6px;letter-spacing:.03em}
+.lr .s{font-size:14.8px;color:var(--dim);line-height:1.55}
+.lr .s .src{display:block;font-size:12px;color:var(--quiet);margin-top:6px}
+.lr.ours{background:rgba(201,169,97,.07)}
+.lr.ours .f{color:var(--gold)}
+
+/* ladder */
+.lad{margin-top:20px}
+.rung{padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.rung:last-child{border-bottom:0}
+.rung .if{display:block;font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:15px;color:var(--gold);font-style:italic;margin-bottom:4px}
+.rung .th{display:block;font-size:15.4px;color:var(--dim);line-height:1.55}
+.rung.r2{padding-left:20px}.rung.r3{padding-left:40px}.rung.r4{padding-left:60px}.rung.r5{padding-left:80px}
+@media(max-width:640px){.rung[class*=r]{padding-left:16px;border-left:2px solid rgba(201,169,97,.3)}}
+
+/* tiers */
+.tg3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:22px}
+@media(max-width:820px){.tg3{grid-template-columns:1fr}}
+.tier{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;transition:.22s}
+.tier:hover{border-color:var(--gold);transform:translateY(-3px)}
+.tier.mid{border:1px solid var(--gold);background:linear-gradient(180deg,rgba(201,169,97,.09),var(--panel))}
+.tier .tn{font-size:11.5px;letter-spacing:.1em;color:var(--teal);font-weight:600}
+.tier .tp{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:31px;color:#fff;margin:9px 0 3px;letter-spacing:-.02em}
+.tier .tw{font-size:12.4px;color:var(--quiet);margin-bottom:13px}
+.tier ul{margin:0;padding-left:16px}
+.tier li{font-size:13.8px;color:var(--dim);margin-bottom:6px;line-height:1.48}
+
+.refuse{border:1px solid rgba(210,114,74,.4);border-left:4px solid var(--rust);border-radius:5px;
+background:rgba(210,114,74,.07);padding:18px 20px;margin:24px 0;font-size:14.6px;color:var(--dim);line-height:1.6}
+.refuse b{color:var(--rust)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+@media(max-width:720px){.g2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px}
+.card p{font-size:14.6px;margin:0;color:var(--dim)}
+.card .big{font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:34px;color:#fff;line-height:1}
+.card .big em{font-style:normal;font-size:12.4px;color:var(--quiet);display:block;margin-top:5px}
+.card ul{margin:11px 0 0;padding-left:17px}
+.card li{font-size:13.8px;color:var(--dim);margin-bottom:4px}
+
+footer{padding:40px 0 70px;border-top:1px solid var(--line);font-size:12.3px;color:var(--quiet);line-height:1.65}
+footer p{color:var(--quiet);font-size:12.3px}
+footer b{color:var(--dim)}
+
+.verbar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:10px;
+padding:10px 22px;background:rgba(3,7,12,.9);border-bottom:1px solid var(--line);
+backdrop-filter:blur(16px);font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.16em}
+.verbar .mk{color:var(--gold);margin-right:8px}
+.verbar button{background:transparent;border:1px solid var(--line);color:var(--dim);padding:6px 12px;cursor:pointer;
+font:inherit;letter-spacing:.16em}
+.verbar button.on{border-color:var(--gold);color:var(--gold);box-shadow:0 0 18px rgba(62,224,255,.18)}
+.hud-frame{position:relative}
+.hud-frame:before,.hud-frame:after{content:"";position:absolute;width:18px;height:18px;border:1px solid var(--gold);pointer-events:none}
+.hud-frame:before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.hud-frame:after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.28;mix-blend-mode:screen;filter:saturate(1.4)}
+nav .bd{font-family:"IBM Plex Mono",ui-monospace,monospace !important;letter-spacing:.18em}
+.scan{position:fixed;inset:0;pointer-events:none;z-index:90;background:repeating-linear-gradient(180deg,transparent 0 2px,rgba(62,224,255,.03) 2px 3px);opacity:.35}
+#room{display:none}
+#room.show,#instrument-root.show{display:block}
+body.room-mode #instrument-root{display:none}
+body.room-mode #room{display:block}
+body.room-mode{--gold:#C9A961;--teal:#C9A961}
+.room-hero{min-height:88vh;display:flex;align-items:center;padding:70px 22px}
+.room-hero h1{font-size:clamp(28px,6vw,62px)}
+.beat{font-size:clamp(18px,3vw,28px);color:var(--dim);margin:0 0 10px;max-width:22ch}
+.beat.last{color:var(--gold);margin-top:18px;font-style:italic}
+
+</style>
+</head>
+<body>
+<div class="scan"></div>
+<div class="verbar">
+  <span class="mk">OPALBLACK</span>
+  <button type="button" id="btn-room">ROOM</button>
+  <button type="button" id="btn-inst" class="on">INSTRUMENT</button>
+  <span style="margin-left:auto;color:var(--quiet)">LIVE · PUBLIC CUT</span>
+</div>
+<div id="room">
+  <div class="room-hero wrap">
+    <div>
+      <div class="kick">THE ROOM</div>
+      <p class="beat">We progressed from a computer on your desk to one in your pocket.</p>
+      <p class="beat">The next age puts compute on every object and wall.</p>
+      <p class="beat">Your smartwatch moves from your wrist</p>
+      <p class="beat">to a full-body health meter in the clothing you wear.</p>
+      <p class="beat last">We are taking the computer out of the box.</p>
+      <p class="hsub">Gold cut of the briefing. Switch to INSTRUMENT for the live physics wall, numbers, and the ask.</p>
+    </div>
+  </div>
+</div>
+<div id="instrument-root">
+
+
+<nav><div class="in">
+  <div class="bd">OPALBLACK</div>
+  <div class="lk">
+    <button type="button" class="nv" data-go="vision">Vision</button><button type="button" class="nv" data-go="instrument">The instrument</button><button type="button" class="nv" data-go="now">Why now</button><button type="button" class="nv" data-go="money">Numbers</button><button type="button" class="nv" data-go="wall">The wall</button><button type="button" class="nv" data-go="floor">The floor</button><button type="button" class="nv" data-go="ask">The ask</button>
+  </div>
+</div></nav>
+
+<div class="hero">
+  <video autoplay muted loop playsinline poster="https://cdn.jsdelivr.net/gh/ReGenFactor/OPALBLACK@main/public/media/hex.jpg">
+    <source src="https://cdn.jsdelivr.net/gh/ReGenFactor/OPALBLACK@main/public/media/hex.mp4" type="video/mp4">
+  </video>
+  <canvas id="surf"></canvas>
+  <div class="in">
+    <div class="kick">VIVOVAC PTY LTD · INSTRUMENT CUT · HUD</div>
+    <h1>Take the computer<br>out of the box.</h1>
+    <div class="strap">We progressed from a computer on your desk to one in your pocket.</div>
+    <p class="hsub">The next age puts compute on every object and wall. Your smartwatch moves from your wrist
+    to a full-body health meter in the clothing you wear. The coating was always going on.</p>
+    <div class="scroll">SCROLL, OR RUN THE INSTRUMENT BELOW ↓</div>
+  </div>
+</div>
+
+<section id="vision"><div class="wrap rv">
+  <div class="eyebrow">WHERE THIS IS GOING</div>
+  <h2>Surface area is the largest unused resource on earth.</h2>
+  <p class="lead">Every piece of intelligence we have built still lives inside something
+  manufactured: a data centre, a chip, a phone. A box built in a ten-billion-dollar plant, connected
+  to a grid, and placed somewhere.</p>
+  <p class="lead">Everything else is inert. Every building, hull, panel, bridge and aircraft skin —
+  the entire surface of the built world — does nothing at all.</p>
+  <div class="pull">Its computational value today is not low. It is zero.</div>
+  <p class="lead">The age of intelligence will need it in a trillion places, and <b>nobody is going
+  to wire a trillion boxes or charge a trillion batteries.</b> The sensor has to vanish into the
+  surface that was going on anyway.</p>
+  <p class="lead"><b>Nobody has to install anything. The coating was always going on.</b> No new
+  component to approve, no process to change, no cable to run.</p>
+</div></section>
+
+<section id="instrument"><div class="wrap rv">
+  <div class="eyebrow">THE INSTRUMENT — LIVE MODEL</div>
+  <h2>Move the conditions. Watch the surface answer.</h2>
+  <p class="lead">Below is a working model of the coating and the reader. The left panel is a slice
+  through the oxide; the right is the electrical signature a reader would see. Both are computed live
+  from a standard circuit model — <b>drag the sliders and the physics responds.</b></p>
+
+  <div class="inst hud-frame">
+    <div class="bar"><span class="dot"></span><span class="t">OPALBLACK · SURFACE INTERROGATION MODEL</span>
+      <span class="rt" id="stamp">sweep 100 Hz – 100 kHz</span></div>
+    <div class="grid">
+      <div class="cell"><div class="clab">COATING CROSS-SECTION</div><canvas id="pore" width="560" height="340"></canvas></div>
+      <div class="cell"><div class="clab">ELECTRICAL SIGNATURE</div><canvas id="bode" width="560" height="340"></canvas></div>
+    </div>
+    <div class="ctrls">
+      <div class="cg">
+        <div class="ct"><label>Moisture <span id="vh">20%</span></label>
+          <input type="range" id="h" min="0" max="100" value="20"></div>
+        <div class="ct"><label>Salt <span id="vs">0%</span></label>
+          <input type="range" id="s" min="0" max="100" value="0"></div>
+        <div class="ct"><label>Ageing drift <span id="vd">0%</span></label>
+          <input type="range" id="d" min="0" max="100" value="0"></div>
+      </div>
+      <div class="btns">
+        <button class="px" data-p="dry">Dry day</button>
+        <button class="px" data-p="breath">Breathe on it</button>
+        <button class="px" data-p="rain">Rain</button>
+        <button class="px" data-p="marine">Salt spray</button>
+        <button class="px" data-p="aged">Five years old</button>
+      </div>
+    </div>
+    <div class="ro">
+      <div><div class="k">SIGNATURE HEIGHT</div><div class="v drift" id="rz">—</div><div class="u">wanders with conditions and age</div></div>
+      <div><div class="k">SHAPE MARKER</div><div class="v" id="rf">—</div><div class="u">the feature we actually read</div></div>
+      <div><div class="k">CLASSIFIED AS</div><div class="v cls" id="rc">—</div><div class="u">what the reader reports</div></div>
+    </div>
+    <div class="verdict" id="vd2"></div>
+  </div>
+
+  <p class="small" style="margin-top:14px">Computed live from a two-time-constant circuit model of a
+  porous oxide on metal. Ageing is modelled as loss of effective contact area: resistance rises and
+  capacitance falls together, so the time constants — the shape — are unchanged while the height is
+  not. The shape marker is the half-fall point of each sweep after that sweep is normalised against
+  itself, which is why it survives any uniform gain or area factor. <b>The shapes and directions are
+  representative of published behaviour; the numbers are not measurements of our material</b>, and
+  nothing in the three open questions has been measured on our own film.</p>
+
+  <div class="pull">Push the ageing slider to the end. The height collapses. The shape marker barely
+  moves — and the reader still gets the answer right.</div>
+  <p class="lead">That is the entire scientific bet, and you can test it yourself in ten seconds.
+  Absolute readings drift with heat, damp and age. <b>We do not read the height. We read the
+  shape</b> — and shape is what survives a decade outdoors.</p>
+</div></section>
+
+<section id="now"><div class="wrap rv">
+  <div class="eyebrow">WHY NOW, AND NOT BEFORE</div>
+  <h2>The thing that stopped it has stopped being true.</h2>
+  <p class="lead">Every previous attempt at this kind of computing has needed a semiconductor plant.
+  Ours needs an anodising bath — a century-old industrial process at roughly nine to twenty-two
+  dollars per square metre, on aluminium already sitting on the asset.</p>
+  <div class="g2">
+    <div class="card"><h3>Grown, where the metal allows it</h3>
+      <p>On aluminium, anodising converts the metal's own surface into oxide. Already anodised in
+      enormous quantity: building envelopes, aircraft skin, ship superstructure, industrial plant,
+      and the objects people carry.</p></div>
+    <div class="card"><h3>Grown on a layer we put there first</h3>
+      <p>Where the material is not aluminium — glass, polymer, steel — we do not switch chemistry and
+      hope. We put a thin aluminium layer down first, then anodise that. Sprayed aluminium is already
+      applied to offshore steel as a corrosion coating the owner pays for anyway.</p></div>
+  </div>
+  <p class="lead" style="margin-top:18px">That second route carries an advantage we did not design
+  for. Sprayed aluminium is <b>sacrificial</b> — meant to corrode so the steel does not. So what the
+  coating reports is the wearing away of the protection itself: <b>how much is left.</b> A specific,
+  valuable question with no good answer today.</p>
+  <div class="refuse">
+    <b>What we are not claiming, and will not until it is measured.</b> Medical or implant
+    applications. Space qualification. Any figure for service life. That the coating stores or
+    generates energy — it does not; the reader brings its own power. And that a damaged coating
+    repairs itself: bare aluminium re-oxidises in air within seconds, which is why it survives
+    outdoors for decades, but a thick anodised layer once broken is repaired by re-coating. We would
+    rather rule these out ourselves than have them found.
+  </div>
+</div></section>
+
+<section id="money"><div class="wrap rv">
+  <div class="eyebrow">THE NUMBERS</div>
+  <h2>A direction is worth its nearest checkable claim.</h2>
+  <p class="lead">Corrosion costs the world an estimated <b>$2.5 trillion a year</b>, and
+  <b>$375–875 billion of that is recoverable using practice that already exists.</b> The barrier has
+  never been knowledge. Yet the entire market for <em>measuring</em> corrosion is about $0.4 billion.</p>
+  <div class="pull">The world spends roughly a hundred times more preventing corrosion than measuring
+  it. We are not short of knowledge. We are short of sight.</div>
+
+  <div class="g2">
+    <div class="card"><div class="big">7<em>components on the asset today</em></div>
+      <ul><li>Sensor</li><li>Signal conditioning</li><li>Processor</li><li>Power source</li>
+      <li>Radio</li><li>Enclosure</li><li>Cabling and mounting</li></ul>
+      <p class="small" style="margin-top:10px;color:var(--quiet)">Every one fails, needs access, gets replaced.</p></div>
+    <div class="card" style="border-color:var(--gold)"><div class="big" style="color:var(--gold)">1<em>component if this works</em></div>
+      <ul><li>The coating</li></ul>
+      <p class="small" style="margin-top:10px;color:var(--quiet)">The reader is not on the asset. It arrives with an
+      inspector, a drone or a passing vehicle and serves thousands of surfaces. Nothing draws power.</p></div>
+  </div>
+
+  <div class="lg">
+    <div class="lr ours"><div class="f">$9–22<small>PER SQUARE METRE</small></div>
+      <div class="s"><b>The manufacturing is a bath, not a plant.</b> A semiconductor plant costs ten
+      to twenty billion and prices output per wafer. These are not two points on one cost curve —
+      they are different units of account, and that is the structural argument.
+      <span class="src">Industrial anodising price guides. Our own coating cost is not yet established.</span></div></div>
+    <div class="lr"><div class="f">$1k–5k<small>PER WIRED MONITORING POINT</small></div>
+      <div class="s"><b>The cost we displace.</b> Mostly cable, conduit and labour rather than the
+      sensor. A national-laboratory programme puts conventional wireless nodes at $150–300 each
+      against a printed-sensor target of $1–10.
+      <span class="src">Industry installation figures; Oak Ridge National Laboratory.</span></div></div>
+    <div class="lr"><div class="f">13 million<small>PROTON SENSORS ON ONE CHIP</small></div>
+      <div class="s"><b>The hardest-looking part is already a manufacturing fact.</b> 99.9% usable,
+      built on standard production lines, sold commercially for over a decade inside DNA sequencers.
+      Reading hydrogen with silicon at scale is not a research risk.
+      <span class="src">Rothberg et al., Nature 475:348 (2011); commercially deployed.</span></div></div>
+    <div class="lr"><div class="f">$11–15bn<small>INSPECTION SPEND, TODAY</small></div>
+      <div class="s"><b>The incumbent spend a self-sensing surface displaces.</b> Growing at 8–9% a
+      year. Alongside it, corrosion-protection coatings run $37–40 billion — a hundred times the
+      corrosion-measuring market.
+      <span class="src">Published analyst estimates, 2025–26; figures cluster across houses.</span></div></div>
+    <div class="lr ours"><div class="f">$0.3–0.8bn<small>OUR FIRST MARKET</small></div>
+      <div class="s"><b>Corrosion under insulation.</b> Under-served precisely because the incumbent
+      cost per point makes coverage uneconomic. Over 1.7 million kilometres of insulated pipework is
+      in service, more than a quarter of it susceptible.
+      <span class="src">Published segment estimates. Our share is unproven until the pilots run.</span></div></div>
+  </div>
+  <p class="lead" style="margin-top:22px"><b>One deliberate omission.</b> You will not find a claim
+  that we capture x% of a market by 2030. Top-down share claims are unfalsifiable and every
+  experienced investor discounts them on sight. That figure will be built bottom-up, with its
+  assumptions visible. We would rather bring it late than bring a bigger one now.</p>
+</div></section>
+
+<section id="wall"><div class="wrap rv">
+  <div class="eyebrow">WHY NOBODY HAS DONE IT</div>
+  <h2>Six reasons. The three biggest do not apply to us.</h2>
+  <p class="lead">Every layer this needs has been proven by someone — hydrogen carrying a signal,
+  hydrogen moving through thin aluminium oxide, silicon reading hydrogen at scale, messy materials
+  doing useful work once the reader is trained. <b>Nobody has connected them.</b></p>
+  <div class="wall" id="wallgrid"></div>
+  <p class="small">Select any block.</p>
+  <div id="accs"></div>
+</div></section>
+
+<section id="floor"><div class="wrap rv">
+  <div class="eyebrow">THE FLOOR</div>
+  <h2>Even at the worst outcome.</h2>
+  <p class="lead">Professional investors price risk before they open a document, so here it is, set
+  out exactly.</p>
+  <div class="lad">
+    <div class="rung r1"><span class="if">Even if the computing never works —</span>
+      <span class="th">we still have a coating read two ways: the condition of the metal underneath, and whether the part is genuine, on the surface of the thing itself.</span></div>
+    <div class="rung r2"><span class="if">Even if only one of those works —</span>
+      <span class="th">we still have a way to find <b>rust underneath pipe insulation</b>: one of the most expensive problems in industrial maintenance, needing no computing claim at all.</span></div>
+    <div class="rung r3"><span class="if">Even if it works only in a narrow range of conditions —</span>
+      <span class="th">we still have everything <b>indoors or under cover</b>: data centre cooling and power plant, electrical cabinets, aircraft interiors, sealed tanks. A narrow range does not remove the market. It tells us which one to take.</span></div>
+    <div class="rung r4"><span class="if">Even if nothing holds its state at all —</span>
+      <span class="th">we still have a coating that fades one way only: <b>a record of how hard something has been worked that nobody can wind back.</b> No power, no computing. The wearing out becomes the product.</span></div>
+    <div class="rung r5"><span class="if">Even at the very bottom —</span>
+      <span class="th">we still hold <b>an answer nobody in the world has today</b>, the money never spent on the later experiments, and the reader itself, which was never tied to this coating.</span></div>
+  </div>
+</div></section>
+
+<section id="ask"><div class="wrap rv">
+  <div class="eyebrow">THE ASK</div>
+  <h2>Fund the experiments. Not the company.</h2>
+  <p class="lead">Eighteen months, a defined sum, and a written condition under which each experiment
+  is abandoned. <b>This is sponsored research with a field option — not a share subscription.</b>
+  Results vest in VivoVac; you hold first access and, at the top tiers, the right to take a licence in
+  one named field.</p>
+  <div class="tg3">
+    <div class="tier"><div class="tn">OBSERVER</div><div class="tp">A$250k</div>
+      <div class="tw">Experiment 1 · six months</div>
+      <ul><li>Every dataset, including negative results</li><li>First look at every result</li><li>No option</li></ul></div>
+    <div class="tier mid"><div class="tn">PROGRAMME PARTNER</div><div class="tp">A$650k</div>
+      <div class="tw">Experiments 1 and 2 · twelve months</div>
+      <ul><li>Every dataset and first look</li><li>Non-exclusive option in one named field</li><li>Quarterly technical review</li></ul></div>
+    <div class="tier"><div class="tn">FOUNDING PARTNER</div><div class="tp">A$1.2M</div>
+      <div class="tw">All three experiments · eighteen months</div>
+      <ul><li>Every dataset and first look</li><li>Exclusive option in one named field</li><li>Technical steering seat and co-publication</li></ul></div>
+  </div>
+  <p class="small" style="margin-top:15px">Figures indicative, subject to final university costing.
+  Tiers are sequential — an Observer may extend with the committed amount credited in full. Multiple
+  partners may sit in non-competing fields.</p>
+  <p class="lead" style="margin-top:16px"><b>What you do not receive:</b> ownership of results, our
+  background intellectual property, any field you did not name, or any guarantee of outcome. The
+  programme may return a negative result, and that risk is stated in the agreement rather than buried
+  in it.</p>
+</div></section>
+
+<section><div class="wrap rv">
+  <div class="eyebrow">WHY WE THINK THIS WORKS</div>
+  <h2>Ten of thirteen layers are already proven.</h2>
+  <p class="lead">Most by other people, in journals anyone can check or products anyone can buy.
+  Hydrogen carrying computing signals. Hydrogen moving through very thin aluminium oxide. Silicon
+  chips reading hydrogen at thirteen million sensors a chip, sold for over a decade. Messy materials
+  doing useful work once the reader is trained. Anodised aluminium making colour from its own structure.</p>
+  <p class="lead"><b>Not one of the three remaining questions asks for a new discovery.</b> Each asks
+  whether established physics behaves the same way in a cheaper material. That is the ordinary
+  business of research, not a leap into the unknown.</p>
+  <p class="lead">The material underneath is a century-old bath process costing a few dollars a square
+  metre, on the most abundant metal in the earth's crust, already sitting on the buildings, aircraft,
+  ships and plant we want to watch. <b>No new factory, no new supply chain, no new element.</b></p>
+  <div class="pull">And the experiment that matters most has never been run by anyone — not run and
+  failed, never attempted. That answer does not exist in the world today. It takes eighteen months and
+  a defined sum to obtain, and whoever funds it holds it first.</div>
+  <p class="lead" style="margin-top:24px"><b>Next step.</b> A technical session with the programme
+  team and our university partner, at which the method detail not included here is made available
+  under a mutual confidentiality agreement.</p>
+  <p class="lead">Claire Ironside, Commercial Liaison, VivoVac Pty Ltd.</p>
+</div></section>
+
+</div><!-- instrument-root -->
+<footer><div class="wrap">
+  <p><b>Sources.</b> Corrosion cost: NACE International IMPACT study, 2016, on a 2013 GDP basis — an
+  order-of-magnitude global estimate rather than a precise annual figure. Market sizes: published
+  analyst estimates 2025–26; forecasts in this sector diverge widely between houses and we quote the
+  lower band. Protonic device figures: Onen et al., <em>Science</em> 377:539 (2022) — a third-party
+  laboratory result, not ours. Proton readout at scale: Rothberg et al., <em>Nature</em> 475:348
+  (2011). Working protonic devices have been published by several separate groups since 2020 in
+  <em>Science</em>, <em>Nature Communications</em>, <em>Nature Electronics</em> and
+  <em>Nature Nanotechnology</em>.</p>
+  <p><b>The model on this page</b> is computed from a standard two-time-constant circuit
+  representation of a porous oxide on metal, chosen so shapes and directions are representative. It is
+  not a measurement, not a prediction of our specific film, and nothing in the three open questions has
+  been measured on our own material.</p>
+  <p><b>Standing.</b> Patent applications are filed, not granted; no representation is made as to
+  grant, scope or commercial outcome. Benefits described may surface; none is guaranteed. This document
+  is pre-contractual and creates no obligation on either party.</p>
+  <p>HG-OPAL-PITCH-004 · interactive · VivoVac Pty Ltd · requires a named counterparty and
+  quality-control clearance before release.</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+
+document.getElementById('btn-room').addEventListener('click',function(){
+  document.body.classList.add('room-mode');
+  this.classList.add('on'); document.getElementById('btn-inst').classList.remove('on');
+  window.scrollTo(0,0);
+});
+document.getElementById('btn-inst').addEventListener('click',function(){
+  document.body.classList.remove('room-mode');
+  this.classList.add('on'); document.getElementById('btn-room').classList.remove('on');
+  window.scrollTo(0,0);
+});
+
+var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- in-page navigation (no hrefs: the sandbox treats them as external) ---------- */
+document.querySelectorAll('button.nv').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var t=document.getElementById(btn.getAttribute('data-go'));
+    if(t) t.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
+  });
+});
+// belt and braces: neutralise any in-page anchor that survives an edit
+document.addEventListener('click',function(e){
+  var a=e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+  if(!a) return;
+  e.preventDefault();
+  var t=document.getElementById(a.getAttribute('href').slice(1));
+  if(t) t.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
+},true);
+
+/* ---------- reveal ---------- */
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+}else{document.querySelectorAll('.rv').forEach(function(el){el.classList.add('on');});}
+
+/* ---------- hero surface ---------- */
+var sc=document.getElementById('surf'), sx=sc.getContext('2d'), sT=0;
+function sizeHero(){var r=sc.getBoundingClientRect(),d=Math.min(window.devicePixelRatio||1,2);
+  sc.width=r.width*d; sc.height=r.height*d; sx.setTransform(d,0,0,d,0,0);}
+sizeHero(); window.addEventListener('resize',sizeHero);
+window.addEventListener('load',sizeHero);
+function hero(){
+  var w=sc.width/(Math.min(window.devicePixelRatio||1,2)), h=sc.height/(Math.min(window.devicePixelRatio||1,2));
+  sx.clearRect(0,0,w,h); sT+=0.0045;
+  var sp=Math.max(34,w/26);
+  for(var y=0;y<h+sp;y+=sp){
+    sx.beginPath();
+    for(var x=0;x<=w;x+=6){
+      var d=Math.hypot(x-w*0.62,y-h*0.45)/Math.max(w,h);
+      var o=Math.sin(d*13-sT*3)*13*Math.exp(-d*2.1)+Math.sin(x*0.008+sT)*3;
+      if(x===0)sx.moveTo(x,y+o); else sx.lineTo(x,y+o);
+    }
+    var a=0.05+0.10*Math.exp(-Math.abs(y-h*0.45)/(h*0.45));
+    sx.strokeStyle='rgba(63,182,201,'+a.toFixed(3)+')'; sx.lineWidth=1; sx.stroke();
+  }
+  var g=sx.createRadialGradient(w*0.62,h*0.45,0,w*0.62,h*0.45,Math.max(w,h)*0.5);
+  g.addColorStop(0,'rgba(62,224,255,0.12)'); g.addColorStop(1,'rgba(11,17,25,0)');
+  sx.fillStyle=g; sx.fillRect(0,0,w,h);
+  if(!RM) requestAnimationFrame(hero);
+}
+hero();
+
+/* ---------- physics ---------- */
+var NF=140, F=[];
+for(var i=0;i<NF;i++) F.push(Math.pow(10, 2 + 3*i/(NF-1)));   // 100 Hz .. 100 kHz
+
+function params(h,s,dr){
+  var wet=h/100, salt=s/100, d=dr/100;
+  // Ageing is modelled as loss of effective contact area plus a small chemical term.
+  // R scales as 1/area and C scales as area, so the RC time constants — the shape —
+  // are invariant to area while the height is not. That is the whole point.
+  var a=1-0.62*d, chem=1+0.10*d;
+  return {
+    Rs: 50 + d*400,
+    R1: 4.0e6*Math.exp(-5.2*wet)*Math.exp(-3.2*salt)*chem/a,
+    C1: 1.5e-9*(1+1.2*wet)*a,
+    R2: 2.0e5*Math.exp(-5.0*wet)*Math.exp(-4.0*salt)*chem/a,
+    C2: 1.0e-8*(1+7*wet+5*salt)*a
+  };
+}
+function spectrum(p){
+  var mag=[],ph=[],i;
+  for(i=0;i<NF;i++){
+    var w=2*Math.PI*F[i];
+    var d1=1+Math.pow(w*p.R1*p.C1,2), r1=p.R1/d1, i1=-w*p.R1*p.R1*p.C1/d1;
+    var d2=1+Math.pow(w*p.R2*p.C2,2), r2=p.R2/d2, i2=-w*p.R2*p.R2*p.C2/d2;
+    var re=p.Rs+r1+r2, im=i1+i2;
+    mag.push(Math.sqrt(re*re+im*im));
+    ph.push(Math.atan2(im,re)*180/Math.PI);
+  }
+  // Per-spectrum normalisation, then the half-fall frequency.
+  // Normalising each sweep against itself removes any uniform gain or area factor,
+  // so this marker tracks the state of the film and not the size of the reading.
+  var L=[],lo=Infinity,hi=-Infinity;
+  for(i=0;i<NF;i++){var v=Math.log(mag[i])/Math.LN10; L.push(v); if(v<lo)lo=v; if(v>hi)hi=v;}
+  var fc=F[NF-1];
+  for(i=1;i<NF;i++){
+    var a0=(L[i-1]-lo)/(hi-lo), a1=(L[i]-lo)/(hi-lo);
+    if(a0>=0.5 && a1<0.5){
+      var t=(a0-0.5)/(a0-a1);
+      fc=Math.pow(10, Math.log(F[i-1])/Math.LN10 + t*(Math.log(F[i]/F[i-1])/Math.LN10));
+      break;
+    }
+  }
+  return {mag:mag, ph:ph, fc:fc, norm:L.map(function(v){return (v-lo)/(hi-lo);})};
+}
+function classify(fc){
+  if(fc<4200) return 'DRY';
+  if(fc<7500) return 'DAMP';
+  if(fc<15800) return 'WET';
+  return 'WET + SALT';
+}
+
+/* ---------- bode ---------- */
+var bc=document.getElementById('bode'), bx=bc.getContext('2d');
+var pcEl=document.getElementById('pore'), pxEl=pcEl.getContext('2d');
+var DIM={pore:{w:560,h:340},bode:{w:560,h:340}};
+function fit(cv,ctx,key){
+  var r=cv.getBoundingClientRect();
+  var w=r.width||DIM[key].w;
+  var hgt=w*(DIM[key].h/DIM[key].w);
+  var d=Math.min(window.devicePixelRatio||1,2);
+  cv.width=Math.round(w*d); cv.height=Math.round(hgt*d);
+  cv.style.height=hgt+'px';
+  ctx.setTransform(d,0,0,d,0,0);
+  DIM[key].cw=w; DIM[key].ch=hgt;
+}
+function fitAll(){ fit(pcEl,pxEl,'pore'); fit(bc,bx,'bode'); }
+function drawBode(sp,prev){
+  var W=DIM.bode.cw||560, H=DIM.bode.ch||340, L=52,R=14,T=14,B=30;
+  bx.clearRect(0,0,W,H);
+  var mlo=2.6,mhi=7.6;
+  function X(f){return L+(Math.log10(f)-2)/3*(W-L-R);}
+  function YM(m){return T+(mhi-Math.log10(Math.max(m,1e-6)))/(mhi-mlo)*(H-T-B);}
+  function YP(p){return T+((0-p)/95)*(H-T-B);}
+  bx.strokeStyle='#243244'; bx.lineWidth=1; bx.font='10px Helvetica,Arial'; bx.fillStyle='#61748B';
+  [[100,'100'],[1000,'1k'],[10000,'10k'],[100000,'100k']].forEach(function(t){
+    bx.beginPath();bx.moveTo(X(t[0]),T);bx.lineTo(X(t[0]),H-B);bx.stroke();
+    bx.textAlign='center'; bx.fillText(t[1],X(t[0]),H-B+15);});
+  for(var e=3;e<=7;e++){bx.beginPath();bx.moveTo(L,YM(Math.pow(10,e)));bx.lineTo(W-R,YM(Math.pow(10,e)));bx.stroke();
+    bx.textAlign='right'; bx.fillText('1e'+e,L-6,YM(Math.pow(10,e))+3);}
+  bx.textAlign='left'; bx.fillStyle='#61748B'; bx.fillText('height (ohms)',L,T-3);
+  bx.textAlign='right'; bx.fillText('frequency (Hz)',W-R,H-6);
+
+  if(prev){
+    bx.beginPath();
+    for(var i=0;i<NF;i++){var x=X(F[i]),y=YM(prev.mag[i]); i?bx.lineTo(x,y):bx.moveTo(x,y);}
+    bx.strokeStyle='rgba(143,161,181,.32)'; bx.lineWidth=1.4; bx.setLineDash([5,4]); bx.stroke(); bx.setLineDash([]);
+  }
+  bx.beginPath();
+  for(var i2=0;i2<NF;i2++){var x2=X(F[i2]),y2=YM(sp.mag[i2]); i2?bx.lineTo(x2,y2):bx.moveTo(x2,y2);}
+  bx.strokeStyle='#3ee0ff'; bx.lineWidth=2.4; bx.stroke();
+
+  bx.beginPath();
+  for(var i3=0;i3<NF;i3++){var x3=X(F[i3]),y3=YP(sp.ph[i3]); i3?bx.lineTo(x3,y3):bx.moveTo(x3,y3);}
+  bx.strokeStyle='rgba(63,182,201,.85)'; bx.lineWidth=1.6; bx.stroke();
+
+  var fx=X(sp.fc);
+  bx.beginPath(); bx.moveTo(fx,T); bx.lineTo(fx,H-B);
+  bx.strokeStyle='rgba(91,201,142,.75)'; bx.lineWidth=1.5; bx.setLineDash([3,3]); bx.stroke(); bx.setLineDash([]);
+  bx.fillStyle='#5BC98E'; bx.textAlign='center'; bx.font='bold 10px Helvetica,Arial';
+  bx.fillText('SHAPE MARKER', fx, T+11);
+}
+
+/* ---------- pore canvas ---------- */
+var pc=pcEl, px=pxEl, dots=[], pT=0;
+for(var q=0;q<130;q++) dots.push({x:Math.random(),y:Math.random(),v:0.2+Math.random()*0.8,s:Math.random()<0.3});
+function drawPore(h,s,d){
+  var W=DIM.pore.cw||560, H=DIM.pore.ch||340, wet=h/100, salt=s/100, age=d/100;
+  px.clearRect(0,0,W,H);
+  var g=px.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#0D1520'); g.addColorStop(1,'#101A26'); px.fillStyle=g; px.fillRect(0,0,W,H);
+
+  var mY=H-56;
+  px.fillStyle='#2A3A4E'; px.fillRect(0,mY,W,56);
+  px.fillStyle='#61748B'; px.font='10px Helvetica,Arial'; px.textAlign='left';
+  px.fillText('ALUMINIUM',12,mY+34);
+
+  var oxT=52, np=17, pw=W/np;
+  px.fillStyle='rgba(63,182,201,0.055)'; px.fillRect(0,oxT,W,mY-oxT);
+  for(var i=0;i<np;i++){
+    var x=i*pw+pw*0.5, w=pw*0.46;
+    px.fillStyle='rgba(9,14,20,0.85)';
+    px.fillRect(x-w/2,oxT,w,mY-oxT-9);
+    var lvl=(mY-oxT-9)*wet;
+    if(lvl>1){
+      var wg=px.createLinearGradient(0,oxT,0,oxT+lvl);
+      wg.addColorStop(0,'rgba(63,182,201,'+(0.20+0.35*wet)+')');
+      wg.addColorStop(1,'rgba(63,182,201,'+(0.05+0.15*wet)+')');
+      px.fillStyle=wg; px.fillRect(x-w/2,oxT,w,lvl);
+    }
+    px.strokeStyle='rgba(62,224,255,'+(0.13+0.10*(1-age))+')'; px.lineWidth=1;
+    px.strokeRect(x-w/2,oxT,w,mY-oxT-9);
+  }
+  px.fillStyle='rgba(62,224,255,0.10)'; px.fillRect(0,oxT-7,W,7);
+  px.fillStyle='#61748B'; px.fillText('OXIDE COATING',12,oxT-13);
+  px.textAlign='right'; px.fillText('AIR  ·  moisture and salt arrive here',W-12,26);
+
+  pT += 0.012 + 0.05*wet;
+  dots.forEach(function(p,idx){
+    if(p.s && salt<0.05) return;
+    var pi=idx%np, x=pi*pw+pw*0.5;
+    var yy=oxT + ((p.y + pT*p.v*(0.3+wet)) % 1) * (mY-oxT-9);
+    var jig=Math.sin(pT*4+idx)*(pw*0.10);
+    px.beginPath(); px.arc(x+jig, yy, p.s?2.6:1.9, 0, 6.284);
+    px.fillStyle = p.s ? 'rgba(210,114,74,'+(0.35+0.5*salt)+')'
+                        : 'rgba(62,224,255,'+(0.25+0.55*wet)+')';
+    px.fill();
+  });
+  if(age>0.02){
+    px.fillStyle='rgba(210,114,74,'+(0.05+0.12*age)+')';
+    px.fillRect(0,mY-6,W,6);
+  }
+}
+
+/* ---------- wire up ---------- */
+var eh=document.getElementById('h'), es=document.getElementById('s'), ed=document.getElementById('d');
+var baseline=null, cur=null;
+function fmtZ(v){
+  if(v>=1e6) return (v/1e6).toFixed(1)+'M';
+  if(v>=1e3) return (v/1e3).toFixed(0)+'k';
+  return v.toFixed(0);
+}
+function update(){
+  var h=+eh.value, s=+es.value, d=+ed.value;
+  document.getElementById('vh').textContent=h+'%';
+  document.getElementById('vs').textContent=s+'%';
+  document.getElementById('vd').textContent=d+'%';
+  var sp=spectrum(params(h,s,d)); cur=sp;
+  if(!baseline) baseline=spectrum(params(20,0,0));
+  drawBode(sp,baseline);
+  if(RM) drawPore(h,s,d);
+  var z=sp.mag[Math.floor(NF*0.33)];
+  document.getElementById('rz').textContent=fmtZ(z);
+  document.getElementById('rf').textContent=(sp.fc/1000).toFixed(2)+' kHz';
+  var cl=classify(sp.fc);
+  document.getElementById('rc').textContent=cl;
+  var bz=baseline.mag[Math.floor(NF*0.33)];
+  var hp=Math.round((z/bz-1)*100), fp=Math.round((sp.fc/baseline.fc-1)*100);
+  var msg;
+  if(d>=45){
+    msg='<b>Ageing applied.</b> The height has moved '+(hp>=0?'+':'')+hp+'% from where it started, '+
+        'while the shape marker has moved '+(fp>=0?'+':'')+fp+'%. The reader still returns '+cl+
+        ' — because it reads the shape, not the height.';
+  } else if(s>=30){
+    msg='<b>Salt present.</b> Ions add conduction paths, so the height falls further and the shape '+
+        'marker slides right. That slide is a different <em>shape</em>, not just a smaller number — '+
+        'which is why salt water and plain water can be told apart.';
+  } else if(h>=55){
+    msg='<b>Moisture in the pores.</b> Height falls, the phase trace lifts towards zero, and the shape '+
+        'marker moves right. Both move together — that is what a real response looks like.';
+  } else {
+    msg='<b>Dry, undisturbed.</b> The dashed line is the starting sweep. Two sweeps that lie on top of '+
+        'each other is the single most important check there is. Now move a slider.';
+  }
+  document.getElementById('vd2').innerHTML=msg;
+}
+[eh,es,ed].forEach(function(el){el.addEventListener('input',update);});
+
+var PRE={dry:[12,0,0],breath:[52,3,0],rain:[82,6,0],marine:[76,66,0],aged:[52,3,92]};
+document.querySelectorAll('button.px').forEach(function(b){
+  b.addEventListener('click',function(){
+    var p=PRE[b.dataset.p];
+    document.querySelectorAll('button.px').forEach(function(o){o.setAttribute('aria-pressed','false');});
+    b.setAttribute('aria-pressed','true');
+    var t0=performance.now(), s0=[+eh.value,+es.value,+ed.value];
+    function step(t){
+      var k=Math.min(1,(t-t0)/(RM?1:620)); var e=1-Math.pow(1-k,3);
+      eh.value=Math.round(s0[0]+(p[0]-s0[0])*e);
+      es.value=Math.round(s0[1]+(p[1]-s0[1])*e);
+      ed.value=Math.round(s0[2]+(p[2]-s0[2])*e);
+      update(); if(k<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+});
+fitAll();
+update();
+var rzT;
+window.addEventListener('resize',function(){
+  clearTimeout(rzT); rzT=setTimeout(function(){ fitAll(); update(); if(RM) drawPore(+eh.value,+es.value,+ed.value); },140);
+});
+window.addEventListener('load',function(){ fitAll(); update(); });
+if(!RM){ (function loop(){ drawPore(+eh.value,+es.value,+ed.value); requestAnimationFrame(loop); })(); }
+
+/* ---------- wall + accordions ---------- */
+var BL=[
+{n:'1',cl:1,nm:'Needing a chip factory',ti:'Needing a chip factory',
+ body:'<p>Every protonic demonstration published to date has needed a semiconductor plant — a building costing ten to twenty billion dollars. Ours needs an anodising bath at roughly nine to twenty-two dollars per square metre, on aluminium already sitting on the asset.</p><p><b>What this opens:</b> anything where area is the problem — building envelopes, pipeline networks, hulls, tank farms. It goes onto things that already exist during normal maintenance. No chip factory, no export permits, no queue.</p>'},
+{n:'2',cl:1,nm:'The timing',ti:'The timing',
+ body:'<p>Nobody funded alternatives to the silicon chip in 2010, because silicon was still getting better every year. The reason appeared only when training a model started costing tens of millions and the grid could no longer supply new data centres — around 2023.</p><p><b>To be clear:</b> getting past this does not make the technology any better. It means somebody is now willing to pay for it — and universities will now share the cost of the work, which is the only reason a partner can fund the experiments at all.</p>'},
+{n:'3',cl:1,nm:'The wiring problem',ti:'The wiring problem — the wall that stopped everyone',
+ body:'<p>The MIT team made 4,056 tiny devices across six chips, and about half worked. They tested them one at a time, because wiring them together is where it falls apart: connect a million components that each work half the time and you get nothing.</p><p><b>We did not solve it. We stopped needing it solved.</b> Our design has no separate components to make, wire or address. The coating is the material and the wiring and the computing at once.</p><p>Said plainly: we changed what we were trying to build rather than discovering anything new. That is worth being honest about — and it removes the single biggest reason no protonic computer exists today.</p>'},
+{n:'4',cl:0,nm:'Hydrogen moves',ti:'Hydrogen moves in and out',
+ tabs:{
+  'The problem':'<p>Hydrogen will not sit still in an open film. Sealing it in for ten years is an unsolved problem across materials science — and for us it is <b>the wrong job entirely</b>. This coating is written continuously by the environment. A film that holds still for ten years is a memory, and we are not building one.</p>',
+  'Our answer':'<p>The open question is not supply. <b>It is repeatability of the class.</b> After wet, dry, hot and cold: does the same input still land in the same class?</p><p>Class means the shape of the signature — where the features sit relative to each other. It does not mean the height at one frequency. Height in a porous hydrated oxide will wander with temperature, humidity and surface water. That movement is not, by itself, a product failure.</p><p>Published mobility gives a floor to reason from: in dense amorphous alumina at room temperature hydrogen moves about <b>0.24 micrometres in a day, 4.5 in a year, 14 in a decade</b>. Against a coating five to twenty-five micrometres thick, hours and days stay local — a working sensor. A decade crosses the film — which is why this can never be a memory.</p><p>It follows plainly that <b>we cannot store a number for a year.</b> If a customer needs memory, we cannot help them, and we should say so before they ask.</p>',
+  'Still to show':'<p>The written pass rule for the third experiment — class, not the return of one number. That experiment is not drafted until that sentence exists, because scoring the wrong quantity would kill a usable coating in the laboratory.</p><p>Measured drift of this film against the published dense-film floor. If the shape walks every cycle so that inputs change class, the readings stop meaning anything after a few years. <b>We do not yet know which it does.</b></p><p>Eighteen months is a planned window, not a result.</p>',
+  'What is certain':'<p>Free hydrogen leaves open films. That is settled, and <b>we are not building a tank.</b> The published figure is a dense-film floor, not our measurement, and we cite it that way.</p><p>There are only two ways forward: seal it in, or build something that does not need it sealed in. <b>Everyone else is sealing. We are not.</b> Nobody can crack containment tomorrow and use it to beat us.</p><p>And we are left with a far easier question than the field. <b>Sealing hydrogen into a package for ten years is unsolved. Asking whether a class holds through a cycle is something you measure.</b></p>'}},
+{n:'5',cl:0,nm:'Hard to see',ti:'Hydrogen is hard to look at directly',
+ tabs:{
+  'The problem':'<p>The standard instruments used to look inside materials are nearly blind to hydrogen. What the field publishes is electrical behaviour plus inference.</p><p>That is enough to sell a working part. <b>It is not enough to hold a patent</b>, or to satisfy a journal that wants a mechanism rather than a correlation.</p>',
+  'Our answer':'<p>We do not try to see hydrogen with an electron microscope. We compare two batches that differ only in isotope, and we put physical measurements on <b>the same coupons</b> as the electrical ones.</p><p>The heavy-hydrogen test alone shows hydrogen is involved. It does not show which path it takes. <b>That gap is real</b>, and it is why the electrical result never travels alone.</p><p>We close it three ways on the same pair: infrared spectroscopy, which separates ordinary from heavy hydrogen chemically; a depth profile on a tab clipped from every coupon; and a temperature sweep giving the energy of the process.</p>',
+  'Still to show':'<p>All three channels together. Until they exist, <b>hydrogen as the working species is a hypothesis</b>, and which path it takes is a further one.</p><p>The depth measurement needs an accelerator, and that queue runs in months rather than weeks. Glow-discharge profiling covers the wait on the same tabs — complementary, not a replacement.</p>',
+  'What is certain':'<p>Electron microscopy does not see hydrogen. <b>Isotope substitution, infrared and depth profiling do.</b> The gap is procedural, not a fact of nature.</p><p>Everyone in this field has the same blindness, and it has not stopped the leading journals publishing the work. We are held to the same standard, not a higher one.</p><p>And it works in our favour in one way nobody expects: <b>a material nobody can easily look inside is a material nobody can easily copy.</b></p>'}},
+{n:'6',cl:0,nm:'No partner yet',ti:'No production partner yet',
+ tabs:{
+  'The problem':'<p>Rival technologies already have manufacturing set up inside the big chip factories. Getting there took years and hundreds of millions. <b>We do not have it and cannot buy it.</b></p><p>The field also has a bad recent history. One company ran out of money in 2022 and survived on an emergency round. Another had a $150 million round collapse in 2025. A third — listed, ten years old — earned about US$1.9 million last year. <b>Every investor we meet has already seen that graveyard.</b></p>',
+  'Our answer':'<p>Manufacturing inside a chip factory protects those companies from each other. It keeps competitors out of <b>their</b> market — and we are not entering their market. Anodising plants exist all over the world and nobody controls access to them.</p><p>Those failures were specific rather than general. They died selling chips into data centres against an opponent with a twenty-year head start in software. <b>We are not selling chips.</b> Our first product is finding corrosion, and our first customer owns plant and a maintenance budget.</p>',
+  'Still to show':'<p>No factory also means no manufacturing experience and no partner who has made a coating that does a job beyond protecting or colouring metal.</p><p><b>And "we are not in that category" is exactly what every company in a distrusted category says.</b> A signed industrial trial settles it; an argument does not.</p>',
+  'What is certain':'<p><b>We do not have to win the computing market to be worth backing. Every company in that graveyard did.</b> They had to beat an entrenched giant to earn a first dollar. Ours comes from an equipment owner buying corrosion detection.</p><p>The difference in money is arithmetic. A chip to market means production runs and hundreds of millions. Finding out whether ours works means a university lab, coated samples and one piece of standard test equipment — roughly a hundred times less. <b>Being the cheapest attempt anyone could make is a real advantage.</b></p><p>This is also the one problem here that cannot get worse than it already is.</p>'}}
+];
+
+var wg=document.getElementById('wallgrid'), ac=document.getElementById('accs');
+BL.forEach(function(b,ix){
+  var el=document.createElement('div');
+  el.className='blk '+(b.cl?'cl':'pv'); el.tabIndex=0; el.setAttribute('role','button');
+  el.innerHTML='<div class="tg">'+(b.cl?'CLEARED':'TO PROVE')+'</div><div class="nm">'+b.nm+'</div>';
+  el.addEventListener('click',function(){open(ix);});
+  el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open(ix);}});
+  wg.appendChild(el);
+
+  var a=document.createElement('div'); a.className='acc'; a.id='acc'+ix;
+  var inner='';
+  if(b.tabs){
+    var ks=Object.keys(b.tabs);
+    inner='<div class="tabs">'+ks.map(function(k,i){
+      return '<button data-k="'+i+'" aria-pressed="'+(i===0)+'">'+k+'</button>';}).join('')+
+      '</div><div class="pane">'+b.tabs[ks[0]]+'</div>';
+  } else inner='<div class="pane">'+b.body+'</div>';
+  a.innerHTML='<div class="hd"><span class="no">'+b.n+'</span><span class="ti">'+b.ti+
+    '</span><span class="ch">+</span></div><div class="bd"><div class="bi">'+inner+'</div></div>';
+  ac.appendChild(a);
+  a.querySelector('.hd').addEventListener('click',function(){a.classList.toggle('open');});
+  if(b.tabs){
+    var ks2=Object.keys(b.tabs), pane=a.querySelector('.pane');
+    a.querySelectorAll('.tabs button').forEach(function(btn){
+      btn.addEventListener('click',function(ev){ev.stopPropagation();
+        pane.innerHTML=b.tabs[ks2[+btn.dataset.k]];
+        a.querySelectorAll('.tabs button').forEach(function(o){o.setAttribute('aria-pressed','false');});
+        btn.setAttribute('aria-pressed','true');});
+    });
+  }
+});
+function open(i){
+  var a=document.getElementById('acc'+i);
+  document.querySelectorAll('.acc').forEach(function(x){if(x!==a)x.classList.remove('open');});
+  a.classList.add('open');
+  a.scrollIntoView({behavior:RM?'auto':'smooth',block:'center'});
+}
+})();
+</script>
+</body>
+</html>
